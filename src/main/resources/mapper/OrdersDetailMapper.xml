@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jay.mapper.OrdersDetailMapper">
+    <resultMap id="OrdersDetailResultMap" type="com.jay.model.OrdersDetail">
+        <result column="id" jdbcType="VARCHAR" property="id" />
+        <result column="orders_id" jdbcType="VARCHAR" property="ordersId" />
+        <result column="goods_id" jdbcType="VARCHAR" property="goodsId" />
+        <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
+        <result column="goods_kindname" jdbcType="VARCHAR" property="goodsKindname" />
+    </resultMap>
+    <insert id="insertDetail" parameterType="com.jay.model.OrdersDetail">
+        INSERT INTO orders_detail(id,orders_id,goods_id,goods_name,goods_kindname)
+        VALUES (#{id},#{ordersId},#{goodsId},#{goodsName},#{goodsKindname})
+    </insert>
+    
+    <select id="selectDetailByOrderId" parameterType="java.lang.String" resultMap="OrdersDetailResultMap">
+        SELECT id,orders_id,goods_id,goods_name,goods_kindname
+        FROM orders_detail WHERE orders_id=#{ordersId}
+    </select>
+</mapper>

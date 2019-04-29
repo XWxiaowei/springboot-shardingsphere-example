@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jay.mapper.OrdersMapper">
+    <resultMap id="OrdersResultMap" type="com.jay.model.Orders">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="parent_orders_uuid" property="parentOrdersUuid" jdbcType="VARCHAR"/>
+        <result column="parent_orders_id" property="parentOrdersId" jdbcType="VARCHAR"/>
+        <result column="order_origin" property="orderOrigin" jdbcType="CHAR"/>
+        <result column="order_type" property="orderType" jdbcType="CHAR"/>
+        <result column="adddate" property="adddate" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <insert id="insertOrders" parameterType="com.jay.model.Orders">
+        INSERT INTO orders(id,parent_orders_uuid,parent_orders_id,order_origin,order_type,adddate)
+        VALUES(#{id},#{parentOrdersUuid},#{parentOrdersId},#{orderOrigin},#{orderType},#{adddate})
+    </insert>
+    <select id="selectById" parameterType="java.lang.String" resultMap="OrdersResultMap">
+        SELECT id,parent_orders_uuid,parent_orders_id,order_origin,order_type,adddate
+        FROM  orders WHERE id=#{id}
+    </select>
+</mapper>
