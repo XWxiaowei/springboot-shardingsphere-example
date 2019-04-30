@@ -8,6 +8,7 @@ import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.StandardShardingStrategyConfiguration;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,18 +27,21 @@ import java.util.Properties;
  * @create 2019/4/29 19:56
  */
 @Configuration
-@MapperScan(basePackages = {"com.jay.mapper"})
+@MapperScan(basePackages = "com.jay.mapper", sqlSessionTemplateRef = "testSqlSessionTemplate")
 public class DataSourceConfig {
-    
+
 
     @Bean(name = "shardingDataSource")
     DataSource getShardingDataSource() throws SQLException {
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
-        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration("orders", "shard_order_${0..1}.orders${0..1}"));
-        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration("orders_detail", "shard_order_${0..1}.orders_detail${0..1}"));
+        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration("orders", "shard_order_${0..1}.orders_${0..1}"));
+        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration("orders_detail", "shard_order_${0..1}.orders_detail_${0..1}"));
         shardingRuleConfig.getBindingTableGroups().add("orders, orders_detail");
         shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration("id", new DatabaseShardingAlgorithm()));
         shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("id", new TableShardingAlgorithm()));
+
+//        设置默认数据库
+        shardingRuleConfig.setDefaultDataSourceName("shard_order_0");
         return ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, new Properties());
     }
 
@@ -51,6 +55,11 @@ public class DataSourceConfig {
         return bean.getObject();
     }
 
+    @Bean
+    @Primary
+    public SqlSessionTemplate testSqlSessionTemplate(SqlSessionFactory sqlSessionFactory) throws Exception {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
     /**
      * 需要手动配置事务管理器
      *

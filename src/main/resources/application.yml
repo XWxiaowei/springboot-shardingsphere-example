@@ -4,7 +4,7 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #端口号
 server:
-  port: 8989
+  port: 8283
 #数据库连接
 spring:
   shardingsphere:
@@ -38,6 +38,11 @@ spring:
                 inline:
                   shardingColumn: orders_id
                   algorithmInlineExpression: orders_detail${orders_id % 2}
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      port: 35730
 
 
 

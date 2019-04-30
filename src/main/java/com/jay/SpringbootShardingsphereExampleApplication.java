@@ -11,6 +11,7 @@ public class SpringbootShardingsphereExampleApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringbootShardingsphereExampleApplication.class, args);
+        System.out.println("------>springboot启动成功");
     }
 
 }

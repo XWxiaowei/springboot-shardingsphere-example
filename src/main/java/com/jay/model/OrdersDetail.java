@@ -1,9 +1,12 @@
 package com.jay.model;
 
+import lombok.Data;
+
 /**
  * @author jay.xiang
  * @create 2019/4/29 19:05
  */
+@Data
 public class OrdersDetail {
     /**
      * 订单明细id

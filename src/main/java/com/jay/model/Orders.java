@@ -1,11 +1,14 @@
 package com.jay.model;
 
+import lombok.Data;
+
 import java.util.Date;
 
 /**
  * @author jay.xiang
  * @create 2019/4/29 19:05
  */
+@Data
 public class Orders {
     /**
      * 订单id
