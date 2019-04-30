@@ -22,6 +22,11 @@
     </properties>
 
     <dependencies>
+        <!--不然系统启动后会自行关闭-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
         <!--shardingsphere -->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>

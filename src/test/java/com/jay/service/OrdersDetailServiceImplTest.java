@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 /**
  * @author jay.xiang
  * @create 2019/4/30 15:22
@@ -28,5 +30,8 @@ public class OrdersDetailServiceImplTest {
 
     @Test
     public void getDetailByOrderId() {
+        String orderId = "3333";
+        List<OrdersDetail> detailByOrderId = ordersDetailService.getDetailByOrderId(orderId);
+        System.out.println("--->返回的数据是"+detailByOrderId);
     }
 }
