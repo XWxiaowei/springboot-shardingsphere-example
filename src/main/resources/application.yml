@@ -1,5 +1,7 @@
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #端口号
 server:
   port: 8989
@@ -7,12 +9,37 @@ server:
 spring:
   shardingsphere:
     datasource:
-      names: shard_order_0
+      names: shard_order_0,shard_order_1
       shard_order_0:
-      driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/orders_0
-      username: root
-      password: admin
+          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/shard_order_0
+          username: root
+          password: admin
+      shard_order_1:
+          driver-class-name: com.mysql.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/shard_order_1
+          username: root
+          password: admin
+    sharding:
+      tables:
+        orders:
+          actualDataNodes: shard_order_${0..1}.orders${0..1}
+          databaseStrategy:
+            inline:
+              shardingColumn: id
+              algorithmInlineExpression: shard_order_${id % 2}
+          tableStrategy:
+              inline:
+                shardingColumn: id
+                algorithmInlineExpression: orders${id % 2}
+          orders_detail:
+              actualDataNodes: shard_order_${0..1}.orders_detail${0..1}
+              tableStrategy:
+                inline:
+                  shardingColumn: orders_id
+                  algorithmInlineExpression: orders_detail${orders_id % 2}
+
+
 
 
 
