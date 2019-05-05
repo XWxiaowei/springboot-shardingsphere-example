@@ -62,19 +62,32 @@ public class DataSourceConfig {
     private String url1;
     @Value("${spring.shardingsphere.datasource.shard_order_1.password}")
     private String password1;
+    @Value("${spring.shardingsphere.sharding.tables.orders.databaseStrategy.inline.shardingColumn}")
+    private String databaseShardingColumn;
+    @Value("${spring.shardingsphere.sharding.tables.orders.tableStrategy.inline.shardingColumn}")
+    private String ordersShardingColumn;
+    @Value("${spring.shardingsphere.sharding.tables.orders_detail.tableStrategy.inline.shardingColumn}")
+    private String ordersDetailShardingColumn;
 
+    /**
+     * 设置数据源
+     * @return
+     * @throws SQLException
+     */
     @Bean(name = "shardingDataSource")
     DataSource getShardingDataSource() throws SQLException {
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
-        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration(ordersLogicTable, ordersActualDataNodes));
-        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes));
         shardingRuleConfig.getBindingTableGroups().add(ordersLogicTable);
         shardingRuleConfig.getBindingTableGroups().add(ordersDetailLogicTable);
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration("id", new DatabaseShardingAlgorithm()));
-        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("id", new TableShardingAlgorithm()));
-
-//        设置默认数据库
+//       配置Orders表规则
+        shardingRuleConfig.getTableRuleConfigs().add(getOrderTableRuleConfiguration());
+        //配置ordersItem表规则
+        shardingRuleConfig.getTableRuleConfigs().add(getOrderDetailTableRuleConfiguration());
+        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm()));
+        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersShardingColumn, new TableShardingAlgorithm()));
+        //设置默认数据库
         shardingRuleConfig.setDefaultDataSourceName(defaultDataSource);
+
         return ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, new Properties());
     }
 
@@ -102,6 +115,19 @@ public class DataSourceConfig {
     @Bean
     public DataSourceTransactionManager transactitonManager(DataSource shardingDataSource) {
         return new DataSourceTransactionManager(shardingDataSource);
+    }
+
+    TableRuleConfiguration getOrderTableRuleConfiguration() {
+        TableRuleConfiguration orderTableRuleConfig=new TableRuleConfiguration(ordersLogicTable, ordersActualDataNodes);
+        orderTableRuleConfig.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm()));
+        orderTableRuleConfig.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersShardingColumn, new TableShardingAlgorithm()));
+        return orderTableRuleConfig;
+    }
+    TableRuleConfiguration getOrderDetailTableRuleConfiguration() {
+        TableRuleConfiguration orderTableRuleConfig=new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes);
+        orderTableRuleConfig.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm()));
+        orderTableRuleConfig.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersDetailShardingColumn, new TableShardingAlgorithm()));
+        return orderTableRuleConfig;
     }
 
     private DataSource createDataSource(String url,String username,String password) {

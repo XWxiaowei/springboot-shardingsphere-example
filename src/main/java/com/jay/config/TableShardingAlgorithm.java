@@ -14,7 +14,7 @@ public class TableShardingAlgorithm  implements PreciseShardingAlgorithm<String>
     public String doSharding(Collection<String> collection, PreciseShardingValue<String> preciseShardingValue) {
         for (String each : collection) {
             if (each.endsWith(Long.parseLong(preciseShardingValue.getValue()) % 2+"")) {
-                System.out.println("DemoTableSharding.each -> " + each + ";       preciseShardingValue-> " + preciseShardingValue.getValue());
+                System.out.println("TableShardingAlgorithm.each（分表值） -> " + each + ";       preciseShardingValue-> " + preciseShardingValue.getValue());
                 return each;
             }
         }

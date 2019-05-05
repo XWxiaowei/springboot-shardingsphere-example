@@ -12,10 +12,11 @@
             <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
-
+    <logger name="com.jay.mapper" level="DEBUG" >
+        <appender-ref ref="STDOUT" />
+    </logger>
     <root>
         <level value="INFO" />
         <appender-ref ref="STDOUT" />
     </root>
-
 </configuration>

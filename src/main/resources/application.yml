@@ -1,7 +1,7 @@
 mybatis:
   mapper-locations: classpath:mapper/*.xml
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 #端口号
 server:
   port: 8283
@@ -20,6 +20,9 @@ spring:
           url: jdbc:mysql://localhost:3306/shard_order_1
           username: root
           password: admin
+    props:
+      sql:
+         show: true  #打印sql
     sharding:
       tables:
         orders:
