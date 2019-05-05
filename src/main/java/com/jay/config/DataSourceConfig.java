@@ -10,6 +10,7 @@ import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -29,19 +30,51 @@ import java.util.Properties;
 @Configuration
 @MapperScan(basePackages = "com.jay.mapper", sqlSessionTemplateRef = "testSqlSessionTemplate")
 public class DataSourceConfig {
+    @Value("${spring.shardingsphere.sharding.tables.orders.actualDataNodes}")
+    private String ordersActualDataNodes;
+    @Value("${spring.shardingsphere.sharding.tables.orders_detail.actualDataNodes}")
+    private String ordersDetailActualDataNodes;
 
+    private String ordersLogicTable="orders";
+
+    private String ordersDetailLogicTable="orders_detail";
+
+    private String defaultDataSource="shard_order_0";
+
+    private String shardOrder1DataSource="shard_order_1";
+
+    @Value("${mybatis.mapper-locations}")
+    private String mapperLocations;
+
+    @Value("${spring.shardingsphere.datasource.names}")
+    private String names;
+
+    @Value("${spring.shardingsphere.datasource.shard_order_0.username}")
+    private String username0;
+    @Value("${spring.shardingsphere.datasource.shard_order_0.url}")
+    private String url0;
+    @Value("${spring.shardingsphere.datasource.shard_order_0.password}")
+    private String password0;
+
+    @Value("${spring.shardingsphere.datasource.shard_order_1.username}")
+    private String username1;
+    @Value("${spring.shardingsphere.datasource.shard_order_1.url}")
+    private String url1;
+    @Value("${spring.shardingsphere.datasource.shard_order_1.password}")
+    private String password1;
 
     @Bean(name = "shardingDataSource")
     DataSource getShardingDataSource() throws SQLException {
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
-        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration("orders", "shard_order_${0..1}.orders_${0..1}"));
-        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration("orders_detail", "shard_order_${0..1}.orders_detail_${0..1}"));
-        shardingRuleConfig.getBindingTableGroups().add("orders, orders_detail");
+        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration(ordersLogicTable, ordersActualDataNodes));
+        shardingRuleConfig.getTableRuleConfigs().add(new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes));
+        shardingRuleConfig.getBindingTableGroups().add(ordersLogicTable);
+        shardingRuleConfig.getBindingTableGroups().add(ordersDetailLogicTable);
         shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration("id", new DatabaseShardingAlgorithm()));
         shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration("id", new TableShardingAlgorithm()));
 
 //        设置默认数据库
-        shardingRuleConfig.setDefaultDataSourceName("shard_order_0");
+        shardingRuleConfig.setDefaultDataSourceName(defaultDataSource);
         return ShardingDataSourceFactory.createDataSource(createDataSourceMap(), shardingRuleConfig, new Properties());
     }
 
@@ -51,13 +84,13 @@ public class DataSourceConfig {
     public SqlSessionFactory sqlSessionFactory(DataSource shardingDataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(shardingDataSource);
-        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/*.xml"));
+        bean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(mapperLocations));
         return bean.getObject();
     }
 
     @Bean
     @Primary
-    public SqlSessionTemplate testSqlSessionTemplate(SqlSessionFactory sqlSessionFactory) throws Exception {
+    public SqlSessionTemplate testSqlSessionTemplate(SqlSessionFactory sqlSessionFactory)  {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
     /**
@@ -71,19 +104,19 @@ public class DataSourceConfig {
         return new DataSourceTransactionManager(shardingDataSource);
     }
 
-    private DataSource createDataSource(final String dataSourceName) {
+    private DataSource createDataSource(String url,String username,String password) {
         BasicDataSource result = new BasicDataSource();
         result.setDriverClassName(com.mysql.jdbc.Driver.class.getName());
-        result.setUrl(String.format("jdbc:mysql://localhost:3306/%s", dataSourceName));
-        result.setUsername("root");
-        result.setPassword("admin");
+        result.setUrl(url);
+        result.setUsername(username);
+        result.setPassword(password);
         return result;
     }
 
     private Map<String, DataSource> createDataSourceMap() {
         Map<String, DataSource> result = new HashMap<>();
-        result.put("shard_order_0", createDataSource("shard_order_0"));
-        result.put("shard_order_1", createDataSource("shard_order_1"));
+        result.put(defaultDataSource, createDataSource(url0,username0,password0));
+        result.put(shardOrder1DataSource, createDataSource(url1,username1,password1));
         return result;
     }
 }
