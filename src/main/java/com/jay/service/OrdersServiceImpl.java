@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -47,5 +48,13 @@ public class OrdersServiceImpl implements OrdersService {
             return null;
         }
         return ordersMapper.queryOrdersPage(id, current, 10);
+    }
+
+    @Override
+    public List<Orders> queryByIds(List<String> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return null;
+        }
+        return ordersMapper.queryInById(ids);
     }
 }

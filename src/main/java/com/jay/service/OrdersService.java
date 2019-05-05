@@ -30,4 +30,10 @@ public interface OrdersService {
      * @return
      */
     List<Orders> queryOrdersPage(String id,int current,int pageSize);
+
+    /**
+     * @param ids
+     * @return
+     */
+    List<Orders> queryByIds(List<String> ids);
 }

@@ -13,7 +13,7 @@ public class DatabaseShardingAlgorithm  implements PreciseShardingAlgorithm<Stri
     @Override
     public String doSharding(Collection<String> collection, PreciseShardingValue<String> preciseShardingValue) {
         for (String each : collection) {
-            if (each.endsWith(Long.parseLong(preciseShardingValue.getValue().toString()) % 2+"")) {
+            if (each.endsWith(Long.parseLong(preciseShardingValue.getValue()) % 2+"")) {
                 System.out.println("DemoDatabaseSharding.each (分库值)-> " + each + ";     preciseShardingValue -> " + preciseShardingValue.getValue());
                 return each;
             }

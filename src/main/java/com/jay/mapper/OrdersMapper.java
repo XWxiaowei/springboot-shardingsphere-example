@@ -35,4 +35,11 @@ public interface OrdersMapper {
             @Param("id") String id,
             @Param("current") int current,
             @Param("pageSize") int pageSize);
+
+    /**
+     * 根据id批量查询
+     * @param ids
+     * @return
+     */
+    List<Orders> queryInById(@Param("ids") List<String> ids);
 }

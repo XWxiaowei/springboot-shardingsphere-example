@@ -8,16 +8,22 @@
         <result column="goods_name" jdbcType="VARCHAR" property="goodsName" />
         <result column="goods_kindname" jdbcType="VARCHAR" property="goodsKindname" />
     </resultMap>
+    <sql id="Base_Column">
+      id,orders_id,goods_id,goods_name,goods_kindname
+    </sql>
     <insert id="insertDetail" parameterType="com.jay.model.OrdersDetail">
-        INSERT INTO orders_detail(id,orders_id,goods_id,goods_name,goods_kindname)
+        INSERT INTO orders_detail(
+        <include refid="Base_Column"/>
+        )
         VALUES (#{id},#{ordersId},#{goodsId},#{goodsName},#{goodsKindname})
     </insert>
     
     <select id="selectDetailByOrderId" parameterType="java.lang.String" resultMap="OrdersDetailResultMap">
-        SELECT id,orders_id,goods_id,goods_name,goods_kindname
+        SELECT
+        <include refid="Base_Column"/>
         FROM orders_detail WHERE orders_id=#{ordersId}
     </select>
-    <select id="selectByGoodsName" resultMap="OrdersResultMap" parameterType="java.lang.String">
+    <select id="selectByGoodsName" resultMap="OrdersDetailResultMap" parameterType="java.lang.String">
         SELECT
         <include refid="Base_Column"/>
         FROM orders_detail

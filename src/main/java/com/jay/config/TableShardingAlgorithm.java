@@ -10,6 +10,12 @@ import java.util.Collection;
  * @create 2019/4/29 19:57
  */
 public class TableShardingAlgorithm  implements PreciseShardingAlgorithm<String> {
+    /**
+     * 分表策略
+     * @param collection
+     * @param preciseShardingValue
+     * @return
+     */
     @Override
     public String doSharding(Collection<String> collection, PreciseShardingValue<String> preciseShardingValue) {
         for (String each : collection) {

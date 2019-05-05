@@ -18,9 +18,7 @@ import java.util.Random;
  * @author jay.xiang
  * @create 2019/4/30 15:22
  */
-@SpringBootTest
-@RunWith(SpringRunner.class)
-public class OrdersDetailServiceImplTest {
+public class OrdersDetailServiceImplTest extends BaseServiceTest{
     @Autowired
     private OrdersDetailService ordersDetailService;
     private SnowFlake snowFlake = new SnowFlake(2,3);
