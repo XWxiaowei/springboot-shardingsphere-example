@@ -28,17 +28,14 @@ spring:
           databaseStrategy:
             inline:
               shardingColumn: id
-              algorithmInlineExpression: shard_order_$->{id % 2}
           tableStrategy:
               inline:
                 shardingColumn: id
-                algorithmInlineExpression: orders_$->{id % 2}
         orders_detail:
           actualDataNodes: shard_order_$->{0..1}.orders_detail_$->{0..1}
           tableStrategy:
             inline:
               shardingColumn: orders_id
-              algorithmInlineExpression: orders_detail_$->{orders_id % 2}
   devtools:
     restart:
       enabled: false

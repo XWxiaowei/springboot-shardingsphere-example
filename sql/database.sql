@@ -1,6 +1,12 @@
 CREATE DATABASE shard_order_0;
 USE shard_order_0;
 
+CREATE TABLE `shard_config` (
+  `config_key` varchar(36) NOT NULL COMMENT '配置键',
+  `config_value` varchar(36) DEFAULT NULL COMMENT '配置值',
+  PRIMARY KEY (`config_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='配置表';
+
 CREATE TABLE `orders_0` (
   `id` varchar(36) NOT NULL COMMENT '订单id',
   `parent_orders_uuid` varchar(36) DEFAULT NULL COMMENT '业务平台的订单id',
