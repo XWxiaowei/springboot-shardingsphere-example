@@ -1,6 +1,9 @@
 package com.jay.mapper;
 
 import com.jay.model.Orders;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author jay.xiang
@@ -9,7 +12,6 @@ import com.jay.model.Orders;
 public interface OrdersMapper {
 
     /**
-     *
      * @param orders
      * @return
      */
@@ -20,4 +22,17 @@ public interface OrdersMapper {
      * @return
      */
     Orders selectById(String id);
+
+    /**
+     * 分页查询
+     *
+     * @param id
+     * @param current
+     * @param pageSize
+     * @return
+     */
+    List<Orders> queryOrdersPage(
+            @Param("id") String id,
+            @Param("current") int current,
+            @Param("pageSize") int pageSize);
 }

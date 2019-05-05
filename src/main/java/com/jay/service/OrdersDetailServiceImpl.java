@@ -3,9 +3,9 @@ package com.jay.service;
 import com.jay.mapper.OrdersDetailMapper;
 import com.jay.model.OrdersDetail;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -34,6 +34,14 @@ public class OrdersDetailServiceImpl implements OrdersDetailService {
             return null;
         }
         return ordersDetailMapper.selectDetailByOrderId(orderId);
+    }
+
+    @Override
+    public List<OrdersDetail> getDetailByName(String name) {
+        if (StringUtils.isNotBlank(name)) {
+            return null;
+        }
+        return ordersDetailMapper.selectDetailByName(name);
     }
 
 }

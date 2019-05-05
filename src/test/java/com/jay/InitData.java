@@ -23,16 +23,38 @@ import java.util.concurrent.Executors;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class InitData {
-    private static ExecutorService pool = Executors.newFixedThreadPool(20);
+    static int nThreads = 100;
+    private static ExecutorService pool = Executors.newFixedThreadPool(nThreads);
     @Autowired
     private OrdersService ordersService;
     @Autowired
     private OrdersDetailService ordersDetailService;
-    private SnowFlake snowFlake = new SnowFlake(2,3);
+    private SnowFlake snowFlake = new SnowFlake(0, 0);
+    @Test
+    public void batchInitData() {
+        for (int i = 0; i < 200000; i++) {
+            Orders orders = new Orders();
+            String orderId = String.valueOf(snowFlake.nextId());
+            orders.setId(orderId);
+            orders.setAdddate(new Date());
+            orders.setOrderType("1");
+            orders.setOrderOrigin("2");
+            orders.setParentOrdersId("222211" + (new Random().nextInt(1000)));
+            orders.setParentOrdersUuid("333333");
+            ordersService.saveOrders(orders);
+
+            OrdersDetail ordersDetail = new OrdersDetail();
+            ordersDetail.setId(String.valueOf(snowFlake.nextId()));
+            ordersDetail.setOrdersId(orderId);
+            ordersDetail.setGoodsId((new Random().nextInt(1000) + "3333"));
+            ordersDetail.setGoodsName("测试商品" + (new Random().nextInt(1000)));
+            ordersDetailService.saveOrderDetail(ordersDetail);
+        }
+    }
 
     @Test
     public void initData() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < nThreads; i++) {
             MyRunnable myRunnable = new MyRunnable("task" + i);
             System.out.println("---------->当前线程是：" + i + " is running");
             pool.execute(myRunnable);
@@ -50,25 +72,25 @@ public class InitData {
 
         @Override
         public void run() {
-            for (int i = 0; i < 10000; i++) {
-                Orders orders = new Orders();
-                String orderId = String.valueOf(snowFlake.nextId());
-                orders.setId(orderId);
-                orders.setAdddate(new Date());
-                orders.setOrderType("1");
-                orders.setOrderOrigin("2");
-                orders.setParentOrdersId("222211"+(new Random().nextInt(1000)));
-                orders.setParentOrdersUuid("333333");
-                ordersService.saveOrders(orders);
 
-                OrdersDetail ordersDetail = new OrdersDetail();
-                ordersDetail.setId(String.valueOf(snowFlake.nextId()));
-                ordersDetail.setOrdersId(orderId);
-                ordersDetail.setGoodsId((new Random().nextInt(1000) + "3333"));
-                ordersDetail.setGoodsName("测试商品" + (new Random().nextInt(1000)));
-                ordersDetailService.saveOrderDetail(ordersDetail);
-            }
+            Orders orders = new Orders();
+            String orderId = String.valueOf(snowFlake.nextId());
+            orders.setId(orderId);
+            orders.setAdddate(new Date());
+            orders.setOrderType("1");
+            orders.setOrderOrigin("2");
+            orders.setParentOrdersId("222211" + (new Random().nextInt(1000)));
+            orders.setParentOrdersUuid("333333");
+            ordersService.saveOrders(orders);
+
+            OrdersDetail ordersDetail = new OrdersDetail();
+            ordersDetail.setId(String.valueOf(snowFlake.nextId()));
+            ordersDetail.setOrdersId(orderId);
+            ordersDetail.setGoodsId((new Random().nextInt(1000) + "3333"));
+            ordersDetail.setGoodsName("测试商品" + (new Random().nextInt(1000)));
+            ordersDetailService.saveOrderDetail(ordersDetail);
         }
+
     }
 
 }

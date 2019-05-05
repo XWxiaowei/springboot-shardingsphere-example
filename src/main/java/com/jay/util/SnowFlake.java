@@ -1,7 +1,5 @@
 package com.jay.util;
 
-import org.springframework.stereotype.Component;
-
 /**
  *
  *  * Twitter_Snowflake<br>
@@ -22,90 +20,119 @@ public class SnowFlake {
     /**
      * 起始的时间戳
      */
-    private final static long START_STMP = 1480166465631L;
+    private final static long twepoch = 1480166465631L;
 
-    /**
-     * 每一部分占用的位数
-     */
-    private final static long SEQUENCE_BIT = 12; //序列号占用的位数
-    private final static long MACHINE_BIT = 5;  //机器标识占用的位数
-    private final static long DATACENTER_BIT = 5;//数据中心占用的位数
+    /** 机器id所占的位数 */
+    private final long workerIdBits = 5L;
 
-    /**
-     * 每一部分的最大值
-     */
-    private final static long MAX_DATACENTER_NUM = -1L ^ (-1L << DATACENTER_BIT);
-    private final static long MAX_MACHINE_NUM = -1L ^ (-1L << MACHINE_BIT);
-    private final static long MAX_SEQUENCE = -1L ^ (-1L << SEQUENCE_BIT);
+    /** 数据标识id所占的位数 */
+    private final long datacenterIdBits = 5L;
 
-    /**
-     * 每一部分向左的位移
-     */
-    private final static long MACHINE_LEFT = SEQUENCE_BIT;
-    private final static long DATACENTER_LEFT = SEQUENCE_BIT + MACHINE_BIT;
-    private final static long TIMESTMP_LEFT = DATACENTER_LEFT + DATACENTER_BIT;
+    /** 支持的最大机器id，结果是31 (这个移位算法可以很快的计算出几位二进制数所能表示的最大十进制数) */
+    private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
 
-    private long datacenterId;  //数据中心
-    private long machineId;    //机器标识
-    private long sequence = 0L; //序列号
-    private long lastStmp = -1L;//上一次时间戳
+    /** 支持的最大数据标识id，结果是31 */
+    private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
 
+    /** 序列在id中占的位数 */
+    private final long sequenceBits = 12L;
+
+    /** 机器ID向左移12位 */
+    private final long workerIdShift = sequenceBits;
+
+    /** 数据标识id向左移17位(12+5) */
+    private final long datacenterIdShift = sequenceBits + workerIdBits;
+
+    /** 时间截向左移22位(5+5+12) */
+    private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
+
+    /** 生成序列的掩码，这里为4095 (0b111111111111=0xfff=4095) */
+    private final long sequenceMask = -1L ^ (-1L << sequenceBits);
+
+    /** 工作机器ID(0~31) */
+    private long workerId;
+
+    /** 数据中心ID(0~31) */
+    private long datacenterId;
+
+    /** 毫秒内序列(0~4095) */
+    private long sequence = 0L;
+
+    /** 上次生成ID的时间截 */
+    private long lastTimestamp = -1L;
+
+    //==============================Constructors=====================================
     /**
      * 构造函数
-     * @param machineId 工作ID (0~31)
+     * @param workerId 工作ID (0~31)
      * @param datacenterId 数据中心ID (0~31)
      */
-    public SnowFlake(long datacenterId, long machineId) {
-        if (datacenterId > MAX_DATACENTER_NUM || datacenterId < 0) {
-            throw new IllegalArgumentException("datacenterId can't be greater than MAX_DATACENTER_NUM or less than 0");
+    public SnowFlake(long workerId, long datacenterId) {
+        if (workerId > maxWorkerId || workerId < 0) {
+            throw new IllegalArgumentException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
         }
-        if (machineId > MAX_MACHINE_NUM || machineId < 0) {
-            throw new IllegalArgumentException("machineId can't be greater than MAX_MACHINE_NUM or less than 0");
+        if (datacenterId > maxDatacenterId || datacenterId < 0) {
+            throw new IllegalArgumentException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         }
+        this.workerId = workerId;
         this.datacenterId = datacenterId;
-        this.machineId = machineId;
     }
 
+    // ==============================Methods==========================================
     /**
-     * 产生下一个ID
      * 获得下一个ID (该方法是线程安全的)
-     * @return
+     * @return SnowflakeId
      */
     public synchronized long nextId() {
-        long currStmp = getNewstmp();
-        if (currStmp < lastStmp) {
-            throw new RuntimeException("Clock moved backwards.  Refusing to generate id");
+        long timestamp = timeGen();
+
+        //如果当前时间小于上一次ID生成的时间戳，说明系统时钟回退过这个时候应当抛出异常
+        if (timestamp < lastTimestamp) {
+            throw new RuntimeException(
+                    String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
         }
 
-        if (currStmp == lastStmp) {
-            //相同毫秒内，序列号自增
-            sequence = (sequence + 1) & MAX_SEQUENCE;
-            //同一毫秒的序列数已经达到最大
-            if (sequence == 0L) {
-                currStmp = getNextMill();
+        //如果是同一时间生成的，则进行毫秒内序列
+        if (lastTimestamp == timestamp) {
+            sequence = (sequence + 1) & sequenceMask;
+            //毫秒内序列溢出
+            if (sequence == 0) {
+                //阻塞到下一个毫秒,获得新的时间戳
+                timestamp = tilNextMillis(lastTimestamp);
             }
-        } else {
-            //不同毫秒内，序列号置为0
+        }
+        //时间戳改变，毫秒内序列重置
+        else {
             sequence = 0L;
         }
 
-        lastStmp = currStmp;
+        //上次生成ID的时间截
+        lastTimestamp = timestamp;
 
-        return (currStmp - START_STMP) << TIMESTMP_LEFT //时间戳部分
-                | datacenterId << DATACENTER_LEFT      //数据中心部分
-                | machineId << MACHINE_LEFT            //机器标识部分
-                | sequence;                            //序列号部分
+        //移位并通过或运算拼到一起组成64位的ID
+        return ((timestamp - twepoch) << timestampLeftShift) //
+                | (datacenterId << datacenterIdShift) //
+                | (workerId << workerIdShift) //
+                | sequence;
     }
 
-    private long getNextMill() {
-        long mill = getNewstmp();
-        while (mill <= lastStmp) {
-            mill = getNewstmp();
+    /**
+     * 阻塞到下一个毫秒，直到获得新的时间戳
+     * @param lastTimestamp 上次生成ID的时间截
+     * @return 当前时间戳
+     */
+    protected long tilNextMillis(long lastTimestamp) {
+        long timestamp = timeGen();
+        while (timestamp <= lastTimestamp) {
+            timestamp = timeGen();
         }
-        return mill;
+        return timestamp;
     }
-
-    private long getNewstmp() {
+    /**
+     * 返回以毫秒为单位的当前时间
+     * @return 当前时间(毫秒)
+     */
+    protected long timeGen() {
         return System.currentTimeMillis();
     }
 }

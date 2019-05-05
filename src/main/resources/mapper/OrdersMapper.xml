@@ -9,12 +9,36 @@
         <result column="order_type" property="orderType" jdbcType="CHAR"/>
         <result column="adddate" property="adddate" jdbcType="TIMESTAMP" />
     </resultMap>
+    <sql id="Base_Column">
+        id,parent_orders_uuid,parent_orders_id,order_origin,order_type,adddate
+    </sql>
     <insert id="insertOrders" parameterType="com.jay.model.Orders">
-        INSERT INTO orders(id,parent_orders_uuid,parent_orders_id,order_origin,order_type,adddate)
+        INSERT INTO orders(
+          <include refid="Base_Column"/>
+        )
         VALUES(#{id},#{parentOrdersUuid},#{parentOrdersId},#{orderOrigin},#{orderType},#{adddate})
     </insert>
     <select id="selectById" parameterType="java.lang.String" resultMap="OrdersResultMap">
-        SELECT id,parent_orders_uuid,parent_orders_id,order_origin,order_type,adddate
+        SELECT
+        <include refid="Base_Column"/>
         FROM  orders WHERE id=#{id}
+    </select>
+    <select id="queryOrdersPage" resultMap="OrdersResultMap">
+        SELECT
+        <include refid="Base_Column"/>
+        FROM  orders
+        WHERE id &gt;=#{id}
+        LIMIT #{current},#{pageSize}
+    </select>
+    <select id="queryBetweenDate" resultMap="OrdersResultMap">
+        SELECT
+        <include refid="Base_Column"/>
+        FROM  orders
+        WHERE adddate BETWEEN #{startTime} AND #{endTime}
+    </select>
+    <select id="queryInById" resultMap="OrdersResultMap">
+        SELECT
+        <include refid="Base_Column"/>
+
     </select>
 </mapper>

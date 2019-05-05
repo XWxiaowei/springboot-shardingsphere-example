@@ -21,4 +21,11 @@ public interface OrdersDetailService {
      * @return
      */
     List<OrdersDetail> getDetailByOrderId(String orderId);
+
+    /**
+     * @param name
+     * @return
+     */
+    List<OrdersDetail> getDetailByName(String name);
+
 }

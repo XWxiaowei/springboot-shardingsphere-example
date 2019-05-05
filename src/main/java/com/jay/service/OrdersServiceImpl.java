@@ -3,9 +3,9 @@ package com.jay.service;
 import com.jay.mapper.OrdersMapper;
 import com.jay.model.Orders;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -33,5 +33,19 @@ public class OrdersServiceImpl implements OrdersService {
             return null;
         }
         return ordersMapper.selectById(id);
+    }
+
+    /**
+     * @param id
+     * @param current
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public List<Orders> queryOrdersPage(String id,int current, int pageSize) {
+        if (StringUtils.isBlank(id)) {
+            return null;
+        }
+        return ordersMapper.queryOrdersPage(id, current, 10);
     }
 }

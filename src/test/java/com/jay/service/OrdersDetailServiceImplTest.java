@@ -48,6 +48,7 @@ public class OrdersDetailServiceImplTest {
         orders.setParentOrdersUuid(UUIDutil.getUUID());
         ordersService.saveOrders(orders);
     }
+
     @Test
     public void getDetailByOrderId() {
         String orderId = "3333";

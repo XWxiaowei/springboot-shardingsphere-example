@@ -21,4 +21,13 @@ public interface OrdersService {
      * @return
      */
     Orders getOrderById(String id);
+
+    /**
+     * 分页查询数据
+     * @param id
+     * @param current
+     * @param pageSize
+     * @return
+     */
+    List<Orders> queryOrdersPage(String id,int current,int pageSize);
 }
