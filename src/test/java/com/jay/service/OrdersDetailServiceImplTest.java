@@ -1,5 +1,6 @@
 package com.jay.service;
 
+import com.jay.mapper.OrdersDetailMapper;
 import com.jay.model.Orders;
 import com.jay.model.OrdersDetail;
 import com.jay.util.SnowFlake;
@@ -24,6 +25,8 @@ public class OrdersDetailServiceImplTest extends BaseServiceTest{
     private SnowFlake snowFlake = new SnowFlake(2,3);
     @Autowired
     private OrdersService ordersService;
+    @Autowired
+    private OrdersDetailMapper ordersDetailMapper;
     @Test
     public void saveOrderDetail() {
         OrdersDetail ordersDetail = new OrdersDetail();
@@ -49,8 +52,14 @@ public class OrdersDetailServiceImplTest extends BaseServiceTest{
 
     @Test
     public void getDetailByOrderId() {
-        String orderId = "3333";
+        String orderId = "2222";
         List<OrdersDetail> detailByOrderId = ordersDetailService.getDetailByOrderId(orderId);
+        System.out.println("--->返回的数据是"+detailByOrderId);
+    }
+    @Test
+    public void getDetailById() {
+        String id = "3333";
+        List<OrdersDetail> detailByOrderId = ordersDetailMapper.selectDetailById(id);
         System.out.println("--->返回的数据是"+detailByOrderId);
     }
 }

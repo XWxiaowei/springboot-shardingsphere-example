@@ -29,4 +29,9 @@ public interface OrdersDetailMapper {
      */
     List<OrdersDetail> selectDetailByName(String name);
 
+    /**
+     * @param id
+     * @return
+     */
+    List<OrdersDetail> selectDetailById(String id);
 }

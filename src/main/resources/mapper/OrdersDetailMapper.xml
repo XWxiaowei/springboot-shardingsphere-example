@@ -29,5 +29,9 @@
         FROM orders_detail
         WHERE goods_name LIKE CONCAT('%',#{goodsName},'%')
     </select>
-
+    <select id="selectDetailById" parameterType="java.lang.String" resultMap="OrdersDetailResultMap">
+        SELECT
+        <include refid="Base_Column"/>
+        FROM orders_detail WHERE id=#{id}
+    </select>
 </mapper>
