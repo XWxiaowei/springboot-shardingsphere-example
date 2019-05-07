@@ -22,7 +22,7 @@ public class OrdersServiceImplTest extends BaseServiceTest {
 
     @Test
     public void getOrderById() {
-        String id = "322452513775157249";
+        String id = "2019111121";
         Orders orderById = ordersService.getOrderById(id);
         System.out.println("getOrderById返回结果："+orderById);
     }

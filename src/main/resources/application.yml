@@ -28,12 +28,12 @@ spring:
           databaseStrategy:
             inline:
               shardingColumn: id
-#          tableStrategy:
-#              inline:
-#                shardingColumn: id
           tableStrategy:
-             hint:
-               algorithmClassName: com.jay.config.TableShardingAlgorithm
+              inline:
+                shardingColumn: id,adddate
+#          tableStrategy:
+#             hint:
+#               algorithmClassName: com.jay.config.TableShardingAlgorithm
         orders_detail:
           actualDataNodes: shard_order_$->{0..1}.orders_detail_$->{0..1}
           tableStrategy:

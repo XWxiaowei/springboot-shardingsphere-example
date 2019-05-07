@@ -1,7 +1,11 @@
 package com.jay.config;
 
 import com.jay.model.ShardConfig;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingAlgorithm;
+import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingValue;
+import org.springframework.beans.factory.annotation.Value;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
@@ -11,6 +15,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,21 +24,23 @@ import java.util.List;
  *
  * @author xiang.wei
  */
-public abstract class AbstractShardingAlgorithm {
-    private static HashMap hashMap;
-    private String url0 = (String) hashMap.get("spring.shardingsphere.datasource.shard_order_0.url");
-    private String username0 = (String) hashMap.get("spring.shardingsphere.datasource.shard_order_0.username");
-    private String password0 = (String) hashMap.get("spring.shardingsphere.datasource.shard_order_0.password");
+@Data
+public  class AbstractShardingAlgorithm   implements ComplexKeysShardingAlgorithm<String> {
+    private String username0;
+    private String url0;
+    private String password0;
 
-    static {
-        Yaml yaml = new Yaml();
-        InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("application.yml");
-        hashMap = yaml.loadAs(resourceAsStream, HashMap.class);
+    public AbstractShardingAlgorithm() {
+    }
 
+    public AbstractShardingAlgorithm(String username0, String url0, String password0) {
+        this.username0 = username0;
+        this.url0 = url0;
+        this.password0 = password0;
     }
 
     public ShardConfig getConfig(String configkey) {
-        ShardConfig shardConfig = new ShardConfig();
+        ShardConfig shardConfig = null;
 
         String sql = "select config_key, config_value from shard_config where config_key=?";
         Connection conn = null;
@@ -43,14 +50,15 @@ public abstract class AbstractShardingAlgorithm {
             String driverName = "com.mysql.jdbc.Driver";
             Class.forName(driverName);
             conn = DriverManager.getConnection(url0, username0, password0);
+            System.out.println("url0, username0, password0={}"+username0);
             statement = conn.prepareStatement(sql);
-            List<String> params = new ArrayList<>();
-            params.add(configkey);
-            String paramStr = StringUtils.join(params, ",");
-            statement.setString(1, paramStr);
+            statement.setString(1, configkey);
             resultSet = statement.executeQuery();
+            System.out.println("---->分页设置，参数={}"+configkey);
             if (resultSet != null) {
                 while (resultSet.next()) {
+                    System.out.println("---->分页设置，参数={}"+resultSet.next());
+                    shardConfig = new ShardConfig();
                     shardConfig.setConfigKey(resultSet.getString("config_key"));
                     shardConfig.setConfigValue(resultSet.getString("config_value"));
                 }
@@ -75,5 +83,10 @@ public abstract class AbstractShardingAlgorithm {
         }
         return shardConfig;
 
+    }
+
+    @Override
+    public Collection<String> doSharding(Collection<String> collection, ComplexKeysShardingValue<String> complexKeysShardingValue) {
+        return null;
     }
 }
