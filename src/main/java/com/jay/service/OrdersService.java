@@ -36,4 +36,12 @@ public interface OrdersService {
      * @return
      */
     List<Orders> queryByIds(List<String> ids);
+
+    /**
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Orders> queryBetweenDate(String startTime,String endTime);
 }

@@ -57,4 +57,13 @@ public class OrdersServiceImpl implements OrdersService {
         }
         return ordersMapper.queryInById(ids);
     }
+
+    @Override
+    public List<Orders> queryBetweenDate(String startTime, String endTime) {
+        if (StringUtils.isAnyBlank(startTime, endTime)) {
+            return null;
+        }
+        return ordersMapper.queryBetweenDate(startTime, endTime);
+    }
+
 }

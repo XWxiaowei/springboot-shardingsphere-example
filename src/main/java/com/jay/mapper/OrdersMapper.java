@@ -42,4 +42,12 @@ public interface OrdersMapper {
      * @return
      */
     List<Orders> queryInById(@Param("ids") List<String> ids);
+
+    /**
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Orders> queryBetweenDate(@Param("startTime") String startTime,
+                                  @Param("endTime") String endTime);
 }

@@ -34,7 +34,7 @@
         SELECT
         <include refid="Base_Column"/>
         FROM  orders
-        WHERE adddate BETWEEN #{startTime} AND #{endTime}
+        WHERE adddate &gt;= #{startTime} AND adddate  &lt;= #{endTime}
     </select>
     <select id="queryInById" parameterType="java.util.List" resultMap="OrdersResultMap">
         SELECT

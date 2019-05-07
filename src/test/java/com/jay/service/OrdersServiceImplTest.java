@@ -5,6 +5,8 @@ import com.jay.util.UUIDutil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +31,17 @@ public class OrdersServiceImplTest extends BaseServiceTest {
         orders.setOrderOrigin("2");
         orders.setParentOrdersId("222211"+(new Random().nextInt(1000)));
         orders.setParentOrdersUuid(UUIDutil.getUUID());
-        ordersService.saveOrders(orders);
+//        ordersService.saveOrders(orders);
+
+        orders.setId("20200102111");
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+            Date parse = dateFormat.parse("2020-01-02 20:08:09");
+            orders.setAdddate(parse);
+            ordersService.saveOrders(orders);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -41,7 +53,7 @@ public class OrdersServiceImplTest extends BaseServiceTest {
 
     @Test
     public void queryOrdersPage() {
-        String id ="322452513775157249";
+        String id ="201905071222";
         List<Orders> orders = ordersService.queryOrdersPage(id, 0, 10);
         System.out.println("queryOrdersPage返回结果："+orders);
     }
@@ -49,10 +61,17 @@ public class OrdersServiceImplTest extends BaseServiceTest {
     @Test
     public void queryByIds() {
         List<String> ids = new ArrayList<>();
-        ids.add("322452513775157249");
-        ids.add("322454449685528577");
-        ids.add("322427920679448576");
+        ids.add("201905071222");
+        ids.add("20200102111");
         List<Orders> ordersList = ordersService.queryByIds(ids);
         System.out.println("queryByIds返回结果："+ordersList);
+    }
+
+    @Test
+    public void queryBetweenDate() {
+        String startTime = "2018-09-01 00:00:00";
+        String endTime = "2020-09-01 23:59:59";
+        List<Orders> orders = ordersService.queryBetweenDate(startTime, endTime);
+        System.out.println("----->queryBetweenDate返回的结果是={}" + orders);
     }
 }

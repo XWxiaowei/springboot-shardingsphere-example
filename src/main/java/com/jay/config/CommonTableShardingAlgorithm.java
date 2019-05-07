@@ -95,7 +95,29 @@ public class CommonTableShardingAlgorithm implements ComplexKeysShardingAlgorith
             setCollect(result, values);
         } else if (columnNameAndShardingValuesMap.containsKey("adddate")) {
             Collection<String> values = columnNameAndShardingValuesMap.get("adddate");
-            setCollect(result, values);
+            String[] valueStrs = values.toArray(new String[values.size()]);
+//            有时间段的，要将时间段内所有的年份都要找出来
+            if (valueStrs.length == 2) {
+                String startTime = valueStrs[0].substring(0,4);
+                String endTime = valueStrs[1].substring(0, 4);
+                int stepLength = Integer.valueOf(endTime) - Integer.valueOf(startTime);
+                for (int i = 0; i < stepLength+1; i++) {
+                    ShardConfig config = getConfig(String.valueOf(Integer.valueOf(startTime) + i));
+                    if (config != null) {
+                        String[] split = config.getConfigValue().split(",");
+                        result.add(tablePrefix+"_"+ split[1]);
+                    }
+                }
+            }
+            //单个时间点的
+            else if (valueStrs.length == 1) {
+                String startTime = valueStrs[0].substring(0, 4);
+                ShardConfig config = getConfig(startTime);
+                if (config != null) {
+                    String[] split = config.getConfigValue().split(",");
+                    result.add(tablePrefix+"_"+ split[1]);
+                }
+            }
         } else if (columnNameAndShardingValuesMap.containsKey("orders_id")) {
             Collection<String> values = columnNameAndShardingValuesMap.get("orders_id");
             setCollect(result, values);
