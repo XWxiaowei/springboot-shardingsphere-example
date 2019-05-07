@@ -93,7 +93,8 @@ public class CommonTableShardingAlgorithm implements ComplexKeysShardingAlgorith
         if (columnNameAndShardingValuesMap.containsKey("id") && "orders".equals(tablePrefix)) {
             Collection<String> values = columnNameAndShardingValuesMap.get("id");
             setCollect(result, values);
-        } else if (columnNameAndShardingValuesMap.containsKey("adddate")) {
+        }
+        if (columnNameAndShardingValuesMap.containsKey("adddate")&& CollectionUtils.isEmpty(result)) {
             Collection<String> values = columnNameAndShardingValuesMap.get("adddate");
             String[] valueStrs = values.toArray(new String[values.size()]);
 //            有时间段的，要将时间段内所有的年份都要找出来
@@ -118,7 +119,8 @@ public class CommonTableShardingAlgorithm implements ComplexKeysShardingAlgorith
                     result.add(tablePrefix+"_"+ split[1]);
                 }
             }
-        } else if (columnNameAndShardingValuesMap.containsKey("orders_id")) {
+        }
+        if (columnNameAndShardingValuesMap.containsKey("orders_id")&& CollectionUtils.isEmpty(result)) {
             Collection<String> values = columnNameAndShardingValuesMap.get("orders_id");
             setCollect(result, values);
         }
