@@ -1,11 +1,14 @@
 package com.jay.service;
 
 import com.jay.model.Orders;
+import com.jay.util.UUIDutil;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -18,11 +21,20 @@ public class OrdersServiceImplTest extends BaseServiceTest {
     private OrdersService ordersService;
     @Test
     public void saveOrders() {
+        Orders orders = new Orders();
+        String orderId = "201905071211";
+        orders.setId(orderId);
+        orders.setAdddate(new Date());
+        orders.setOrderType("1");
+        orders.setOrderOrigin("2");
+        orders.setParentOrdersId("222211"+(new Random().nextInt(1000)));
+        orders.setParentOrdersUuid(UUIDutil.getUUID());
+        ordersService.saveOrders(orders);
     }
 
     @Test
     public void getOrderById() {
-        String id = "2019111121";
+        String id = "201905071211";
         Orders orderById = ordersService.getOrderById(id);
         System.out.println("getOrderById返回结果："+orderById);
     }

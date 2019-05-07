@@ -27,7 +27,7 @@ spring:
           actualDataNodes: shard_order_$->{0..1}.orders_$->{0..1}
           databaseStrategy:
             inline:
-              shardingColumn: id
+              shardingColumn: id,adddate
           tableStrategy:
               inline:
                 shardingColumn: id,adddate

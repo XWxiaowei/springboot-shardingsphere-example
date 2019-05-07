@@ -42,4 +42,12 @@ public class ShardConfig {
     public void setConfigValue(String configValue) {
         this.configValue = configValue == null ? null : configValue.trim();
     }
+
+    @Override
+    public String toString() {
+        return "ShardConfig{" +
+                "configKey='" + configKey + '\'' +
+                ", configValue='" + configValue + '\'' +
+                '}';
+    }
 }

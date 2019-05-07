@@ -38,19 +38,6 @@ public class OrdersDetailServiceImplTest extends BaseServiceTest{
     }
 
     @Test
-    public void saveOrders() {
-        Orders orders = new Orders();
-        String orderId = String.valueOf(snowFlake.nextId());
-        orders.setId(orderId);
-        orders.setAdddate(new Date());
-        orders.setOrderType("1");
-        orders.setOrderOrigin("2");
-        orders.setParentOrdersId("222211"+(new Random().nextInt(1000)));
-        orders.setParentOrdersUuid(UUIDutil.getUUID());
-        ordersService.saveOrders(orders);
-    }
-
-    @Test
     public void getDetailByOrderId() {
         String orderId = "2222";
         List<OrdersDetail> detailByOrderId = ordersDetailService.getDetailByOrderId(orderId);

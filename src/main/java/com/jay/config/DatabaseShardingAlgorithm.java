@@ -1,7 +1,6 @@
 package com.jay.config;
 
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
-import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
+import com.jay.model.ShardConfig;
 
 import java.util.Collection;
 
@@ -9,15 +8,22 @@ import java.util.Collection;
  * @author jay.xiang
  * @create 2019/4/29 19:56
  */
-public class DatabaseShardingAlgorithm  implements PreciseShardingAlgorithm<String> {
+public class DatabaseShardingAlgorithm extends CommonTableShardingAlgorithm {
+
+    public DatabaseShardingAlgorithm(String username0, String url0, String password0, String tablePrefix) {
+        super(username0, url0, password0, tablePrefix);
+    }
+
     @Override
-    public String doSharding(Collection<String> collection, PreciseShardingValue<String> preciseShardingValue) {
-        for (String each : collection) {
-            if (each.endsWith(Long.parseLong(preciseShardingValue.getValue()) % 2+"")) {
-                System.out.println("DemoDatabaseSharding.each (分库值)-> " + each + ";     preciseShardingValue -> " + preciseShardingValue.getValue());
-                return each;
+    protected void setCollect(Collection<String> result, Collection<String> values) {
+        for (String value : values) {
+            String substring = value.substring(0, 4);
+            ShardConfig config = getConfig(substring);
+            if (config != null) {
+                System.out.println("DemoTableSharding.each(分库值)" + config);
+                String[] split = config.getConfigValue().split(",");
+                result.add(split[0]);
             }
         }
-        throw new IllegalArgumentException();
     }
 }

@@ -6,7 +6,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.shardingsphere.api.config.sharding.ShardingRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.TableRuleConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.ComplexShardingStrategyConfiguration;
-import org.apache.shardingsphere.api.config.sharding.strategy.HintShardingStrategyConfiguration;
 import org.apache.shardingsphere.api.config.sharding.strategy.StandardShardingStrategyConfiguration;
 import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -85,13 +84,8 @@ public class DataSourceConfig {
         shardingRuleConfig.getTableRuleConfigs().add(getOrderTableRuleConfiguration());
         //配置ordersItem表规则
         shardingRuleConfig.getTableRuleConfigs().add(getOrderDetailTableRuleConfiguration());
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm()));
-//        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersShardingColumn, new TableShardingAlgorithm()));
-        TableShardingAlgorithm tableShardingAlgorithm = new TableShardingAlgorithm();
-        tableShardingAlgorithm.setUrl0(url0);
-        tableShardingAlgorithm.setPassword0(password0);
-        tableShardingAlgorithm.setUsername0(username0);
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersShardingColumn,new TableShardingAlgorithm()));
+        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm(username0,url0,password0,null)));
+        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersShardingColumn,new CommonTableShardingAlgorithm(username0,url0,password0,ordersLogicTable)));
 
         //设置默认数据库
         shardingRuleConfig.setDefaultDataSourceName(defaultDataSource);
@@ -127,20 +121,15 @@ public class DataSourceConfig {
 
     TableRuleConfiguration getOrderTableRuleConfiguration() {
         TableRuleConfiguration orderTableRuleConfig=new TableRuleConfiguration(ordersLogicTable, ordersActualDataNodes);
-        orderTableRuleConfig.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm()));
-//        orderTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersShardingColumn, new TableShardingAlgorithm()));
-        TableShardingAlgorithm tableShardingAlgorithm = new TableShardingAlgorithm();
-        tableShardingAlgorithm.setUrl0(url0);
-        tableShardingAlgorithm.setPassword0(password0);
-        tableShardingAlgorithm.setUsername0(username0);
-        orderTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersShardingColumn,tableShardingAlgorithm));
+        orderTableRuleConfig.setDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm(username0,url0,password0,null)));
+        orderTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersShardingColumn,new CommonTableShardingAlgorithm(username0,url0,password0,ordersLogicTable)));
         return orderTableRuleConfig;
     }
     TableRuleConfiguration getOrderDetailTableRuleConfiguration() {
-        TableRuleConfiguration orderTableRuleConfig=new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes);
-        orderTableRuleConfig.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm()));
-//        orderTableRuleConfig.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersDetailShardingColumn, new OrderDetailShardingAlgorithm()));
-        return orderTableRuleConfig;
+        TableRuleConfiguration orderDetailTableRuleConfig=new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes);
+        orderDetailTableRuleConfig.setDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm(username0,url0,password0,null)));
+        orderDetailTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersDetailShardingColumn, new CommonTableShardingAlgorithm(username0,url0,password0,ordersLogicTable)));
+        return orderDetailTableRuleConfig;
     }
 
     private DataSource createDataSource(String url,String username,String password) {
