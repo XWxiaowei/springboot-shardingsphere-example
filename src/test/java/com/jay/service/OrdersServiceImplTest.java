@@ -22,7 +22,7 @@ public class OrdersServiceImplTest extends BaseServiceTest {
     @Test
     public void saveOrders() {
         Orders orders = new Orders();
-        String orderId = "201905071211";
+        String orderId = "201905071222";
         orders.setId(orderId);
         orders.setAdddate(new Date());
         orders.setOrderType("1");

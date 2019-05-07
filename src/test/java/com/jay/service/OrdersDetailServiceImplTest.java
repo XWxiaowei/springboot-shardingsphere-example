@@ -32,8 +32,9 @@ public class OrdersDetailServiceImplTest extends BaseServiceTest{
         OrdersDetail ordersDetail = new OrdersDetail();
         ordersDetail.setId("111");
         ordersDetail.setGoodsId("2222");
-        ordersDetail.setOrdersId("3333");
+        ordersDetail.setOrdersId("201905071222");
         ordersDetail.setGoodsName("测试商品");
+        ordersDetail.setGoodsKindname("测试类目");
         ordersDetailService.saveOrderDetail(ordersDetail);
     }
 

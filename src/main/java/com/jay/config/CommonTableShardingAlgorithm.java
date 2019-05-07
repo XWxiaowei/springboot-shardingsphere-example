@@ -53,7 +53,6 @@ public class CommonTableShardingAlgorithm implements ComplexKeysShardingAlgorith
             String driverName = "com.mysql.jdbc.Driver";
             Class.forName(driverName);
             conn = DriverManager.getConnection(url0, username0, password0);
-            System.out.println("url0, username0, password0={}" + username0);
             statement = conn.prepareStatement(sql);
             statement.setString(1, configkey);
             resultSet = statement.executeQuery();
@@ -91,19 +90,20 @@ public class CommonTableShardingAlgorithm implements ComplexKeysShardingAlgorith
     public Collection<String> doSharding(Collection<String> collection, ComplexKeysShardingValue<String> complexKeysShardingValue) {
         Collection<String> result = new LinkedHashSet<>();
         Map<String, Collection<String>> columnNameAndShardingValuesMap = complexKeysShardingValue.getColumnNameAndShardingValuesMap();
-        if (columnNameAndShardingValuesMap.containsKey("id")) {
+        if (columnNameAndShardingValuesMap.containsKey("id") && "orders".equals(tablePrefix)) {
             Collection<String> values = columnNameAndShardingValuesMap.get("id");
             setCollect(result, values);
         } else if (columnNameAndShardingValuesMap.containsKey("adddate")) {
             Collection<String> values = columnNameAndShardingValuesMap.get("adddate");
             setCollect(result, values);
         } else if (columnNameAndShardingValuesMap.containsKey("orders_id")) {
-            Collection<String> values = columnNameAndShardingValuesMap.get("adddate");
+            Collection<String> values = columnNameAndShardingValuesMap.get("orders_id");
             setCollect(result, values);
         }
         if (CollectionUtils.isEmpty(result)) {
             result = collection;
         }
+        System.out.println("DemoTableSharding.each(分表值)" + result);
         return result;
     }
 
@@ -116,7 +116,6 @@ public class CommonTableShardingAlgorithm implements ComplexKeysShardingAlgorith
             String substring = value.substring(0, 4);
             ShardConfig config = getConfig(substring);
             if (config != null) {
-                System.out.println("DemoTableSharding.each(分表值)" + config);
                 String[] split = config.getConfigValue().split(",");
                 result.add(tablePrefix+"_"+ split[1]);
             }

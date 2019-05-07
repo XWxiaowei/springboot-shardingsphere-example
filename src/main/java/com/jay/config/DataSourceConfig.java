@@ -128,7 +128,7 @@ public class DataSourceConfig {
     TableRuleConfiguration getOrderDetailTableRuleConfiguration() {
         TableRuleConfiguration orderDetailTableRuleConfig=new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes);
         orderDetailTableRuleConfig.setDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm(username0,url0,password0,null)));
-        orderDetailTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersDetailShardingColumn, new CommonTableShardingAlgorithm(username0,url0,password0,ordersLogicTable)));
+        orderDetailTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersDetailShardingColumn, new CommonTableShardingAlgorithm(username0,url0,password0,ordersDetailLogicTable)));
         return orderDetailTableRuleConfig;
     }
 

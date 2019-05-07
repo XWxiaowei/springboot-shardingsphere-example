@@ -1,8 +1,12 @@
 package com.jay.config;
 
 import com.jay.model.ShardConfig;
+import org.apache.shardingsphere.api.sharding.complex.ComplexKeysShardingValue;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 /**
  * @author jay.xiang
@@ -15,14 +19,38 @@ public class DatabaseShardingAlgorithm extends CommonTableShardingAlgorithm {
     }
 
     @Override
+    public Collection<String> doSharding(Collection<String> collection, ComplexKeysShardingValue<String> complexKeysShardingValue) {
+        Collection<String> result = new LinkedHashSet<>();
+        Map<String, Collection<String>> columnNameAndShardingValuesMap = complexKeysShardingValue.getColumnNameAndShardingValuesMap();
+        if (columnNameAndShardingValuesMap.containsKey("id")) {
+            Collection<String> values = columnNameAndShardingValuesMap.get("id");
+            setCollect(result, values);
+        }
+        if (columnNameAndShardingValuesMap.containsKey("adddate") && CollectionUtils.isEmpty(result)) {
+            Collection<String> values = columnNameAndShardingValuesMap.get("adddate");
+            setCollect(result, values);
+        }
+        if (columnNameAndShardingValuesMap.containsKey("orders_id") && CollectionUtils.isEmpty(result)) {
+            Collection<String> values = columnNameAndShardingValuesMap.get("orders_id");
+            setCollect(result, values);
+        }
+        if (CollectionUtils.isEmpty(result)) {
+            result = collection;
+        }
+        System.out.println("DemoTableSharding.each(分库值)" + result);
+        return result;
+    }
+
+    @Override
     protected void setCollect(Collection<String> result, Collection<String> values) {
         for (String value : values) {
-            String substring = value.substring(0, 4);
-            ShardConfig config = getConfig(substring);
-            if (config != null) {
-                System.out.println("DemoTableSharding.each(分库值)" + config);
-                String[] split = config.getConfigValue().split(",");
-                result.add(split[0]);
+            if (value.length() >= 4) {
+                String substring = value.substring(0, 4);
+                ShardConfig config = getConfig(substring);
+                if (config != null) {
+                    String[] split = config.getConfigValue().split(",");
+                    result.add(split[0]);
+                }
             }
         }
     }
