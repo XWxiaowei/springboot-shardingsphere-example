@@ -30,7 +30,7 @@ spring:
               shardingColumn:  adddate
           tableStrategy:
               inline:
-                shardingColumn: id,adddate,orders_id
+                shardingColumn: id
 #          tableStrategy:
 #             hint:
 #               algorithmClassName: com.jay.config.TableShardingAlgorithm

@@ -11,6 +11,7 @@ import org.apache.shardingsphere.shardingjdbc.api.ShardingDataSourceFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -69,6 +70,11 @@ public class DataSourceConfig {
     private String ordersShardingColumn;
     @Value("${spring.shardingsphere.sharding.tables.orders_detail.tableStrategy.inline.shardingColumn}")
     private String ordersDetailShardingColumn;
+    @Autowired
+    private DatabaseShardingAlgorithm preciseModuloDatabaseShardingAlgorithm;
+    @Autowired
+    private CommonTableShardingAlgorithm preciseModuloTableShardingAlgorithm;
+
 
     /**
      * 设置数据源
@@ -84,8 +90,8 @@ public class DataSourceConfig {
         shardingRuleConfig.getTableRuleConfigs().add(getOrderTableRuleConfiguration());
         //配置ordersItem表规则
         shardingRuleConfig.getTableRuleConfigs().add(getOrderDetailTableRuleConfiguration());
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm(username0,url0,password0,null)));
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersShardingColumn,new CommonTableShardingAlgorithm(username0,url0,password0,ordersLogicTable)));
+        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, preciseModuloDatabaseShardingAlgorithm));
+        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersShardingColumn,preciseModuloTableShardingAlgorithm));
 
         //设置默认数据库
         shardingRuleConfig.setDefaultDataSourceName(defaultDataSource);
@@ -121,14 +127,14 @@ public class DataSourceConfig {
 
     TableRuleConfiguration getOrderTableRuleConfiguration() {
         TableRuleConfiguration orderTableRuleConfig=new TableRuleConfiguration(ordersLogicTable, ordersActualDataNodes);
-        orderTableRuleConfig.setDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm(username0,url0,password0,null)));
-        orderTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersShardingColumn,new CommonTableShardingAlgorithm(username0,url0,password0,ordersLogicTable)));
+        orderTableRuleConfig.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, preciseModuloDatabaseShardingAlgorithm));
+        orderTableRuleConfig.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersShardingColumn,preciseModuloTableShardingAlgorithm));
         return orderTableRuleConfig;
     }
     TableRuleConfiguration getOrderDetailTableRuleConfiguration() {
         TableRuleConfiguration orderDetailTableRuleConfig=new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes);
-        orderDetailTableRuleConfig.setDatabaseShardingStrategyConfig(new ComplexShardingStrategyConfiguration(databaseShardingColumn, new DatabaseShardingAlgorithm(username0,url0,password0,null)));
-        orderDetailTableRuleConfig.setTableShardingStrategyConfig(new ComplexShardingStrategyConfiguration(ordersDetailShardingColumn, new CommonTableShardingAlgorithm(username0,url0,password0,ordersDetailLogicTable)));
+        orderDetailTableRuleConfig.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, preciseModuloDatabaseShardingAlgorithm));
+        orderDetailTableRuleConfig.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersDetailShardingColumn, preciseModuloTableShardingAlgorithm));
         return orderDetailTableRuleConfig;
     }
 
