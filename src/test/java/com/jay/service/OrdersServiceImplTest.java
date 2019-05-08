@@ -23,25 +23,27 @@ public class OrdersServiceImplTest extends BaseServiceTest {
     private OrdersService ordersService;
     @Test
     public void saveOrders() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
+
         Orders orders = new Orders();
-        String orderId = "201905071222";
+        String orderId = dateFormat.format(new Date())+new Random().nextInt(1000);
         orders.setId(orderId);
         orders.setAdddate(new Date());
         orders.setOrderType("1");
         orders.setOrderOrigin("2");
         orders.setParentOrdersId("222211"+(new Random().nextInt(1000)));
         orders.setParentOrdersUuid(UUIDutil.getUUID());
-//        ordersService.saveOrders(orders);
+        ordersService.saveOrders(orders);
 
-        orders.setId("20200102111");
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-            Date parse = dateFormat.parse("2020-01-02 20:08:09");
-            orders.setAdddate(parse);
-            ordersService.saveOrders(orders);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        orders.setId("20200102111");
+//        try {
+//            dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+//            Date parse = dateFormat.parse("2020-01-02 20:08:09");
+//            orders.setAdddate(parse);
+//            ordersService.saveOrders(orders);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Test
