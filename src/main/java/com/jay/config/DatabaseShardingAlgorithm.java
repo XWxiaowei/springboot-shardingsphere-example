@@ -11,6 +11,8 @@ import org.apache.shardingsphere.api.sharding.standard.PreciseShardingValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 
 /**
@@ -21,13 +23,14 @@ import java.util.Collection;
 @Data
 @Slf4j
 @Service("preciseModuloDatabaseShardingAlgorithm")
-public class DatabaseShardingAlgorithm implements PreciseShardingAlgorithm<String> {
+public class DatabaseShardingAlgorithm implements PreciseShardingAlgorithm<Timestamp>{
 
     /**
-     * TODO 需要指定主库
      */
     @Autowired
     private ShardConfigMapper shardConfigMapper;
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//定义格式，不显示毫秒
+
 
     /**
      * 
@@ -35,11 +38,12 @@ public class DatabaseShardingAlgorithm implements PreciseShardingAlgorithm<Strin
      * @param preciseShardingValue
      * @return
      */
-    // TODO: 2019/5/8 需要调整
     @Override
-    public String doSharding(Collection<String> collection, PreciseShardingValue<String> preciseShardingValue) {
+    public String doSharding(Collection<String> collection, PreciseShardingValue<Timestamp> preciseShardingValue) {
         String physicDatabase = null;
-        String subValue = preciseShardingValue.getValue().substring(0, 7).replace("-", "");
+        Timestamp valueTime = preciseShardingValue.getValue();
+        String orgValue = df.format(valueTime);
+        String subValue = orgValue.substring(0, 4).replace("-", "");
         ShardConfig shardConfig = shardConfigMapper.selectByPrimaryKey(subValue);
         if (shardConfig != null) {
             physicDatabase = shardConfig.getConfigValue().split(",")[0];

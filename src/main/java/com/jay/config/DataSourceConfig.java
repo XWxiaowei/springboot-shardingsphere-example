@@ -74,6 +74,8 @@ public class DataSourceConfig {
     private DatabaseShardingAlgorithm preciseModuloDatabaseShardingAlgorithm;
     @Autowired
     private CommonTableShardingAlgorithm preciseModuloTableShardingAlgorithm;
+    @Autowired
+    private OrderDetailTableShardingAlgorithm orderDetailTableShardingAlgorithm;
 
 
     /**
@@ -100,6 +102,12 @@ public class DataSourceConfig {
     }
 
 
+    /**
+     * 获取sqlSessionFactory实例
+     * @param shardingDataSource
+     * @return
+     * @throws Exception
+     */
     @Bean
     @Primary
     public SqlSessionFactory sqlSessionFactory(DataSource shardingDataSource) throws Exception {
@@ -134,7 +142,7 @@ public class DataSourceConfig {
     TableRuleConfiguration getOrderDetailTableRuleConfiguration() {
         TableRuleConfiguration orderDetailTableRuleConfig=new TableRuleConfiguration(ordersDetailLogicTable, ordersDetailActualDataNodes);
         orderDetailTableRuleConfig.setDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, preciseModuloDatabaseShardingAlgorithm));
-        orderDetailTableRuleConfig.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersDetailShardingColumn, preciseModuloTableShardingAlgorithm));
+        orderDetailTableRuleConfig.setTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersDetailShardingColumn, orderDetailTableShardingAlgorithm));
         return orderDetailTableRuleConfig;
     }
 

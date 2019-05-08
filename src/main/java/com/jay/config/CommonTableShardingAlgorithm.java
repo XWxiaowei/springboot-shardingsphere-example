@@ -29,12 +29,7 @@ public class CommonTableShardingAlgorithm implements PreciseShardingAlgorithm<St
     @Override
     public String doSharding(Collection<String> collection, PreciseShardingValue<String> preciseShardingValue) {
         String physicsTable = null;
-        if (StringUtils.equals(preciseShardingValue.getColumnName(), "id") && "orders".equals(preciseShardingValue.getLogicTableName())) {
-            physicsTable=setValue(preciseShardingValue);
-        }
-        if (StringUtils.equals(preciseShardingValue.getColumnName(),"orders_id")&& StringUtils.isBlank(physicsTable)) {
-            physicsTable=setValue(preciseShardingValue);
-        }
+        physicsTable=setValue(preciseShardingValue);
         if (StringUtils.isBlank(physicsTable)) {
             log.info("----->该分片键值找不到对应的分表,默认取第一个表，分片键是={}，逻辑表是={},分片值是={}",preciseShardingValue.getColumnName(),preciseShardingValue.getLogicTableName(),preciseShardingValue.getValue());
             for (String value : collection) {
@@ -42,7 +37,7 @@ public class CommonTableShardingAlgorithm implements PreciseShardingAlgorithm<St
                 break;
             }
         }
-        log.info("----->该分片键值找不到对应的分表，分片键是={}，逻辑表是={},分片值是={}",preciseShardingValue.getColumnName(),preciseShardingValue.getLogicTableName(),preciseShardingValue.getValue());
+        log.info("----->该分片键值找到对应的分表，分片键是={}，逻辑表是={},分片值是={}",preciseShardingValue.getColumnName(),preciseShardingValue.getLogicTableName(),preciseShardingValue.getValue());
         return physicsTable;
     }
 
@@ -51,7 +46,7 @@ public class CommonTableShardingAlgorithm implements PreciseShardingAlgorithm<St
      * @return
      */
     protected String setValue(PreciseShardingValue<String> preciseShardingValue) {
-        String substring = preciseShardingValue.getValue().substring(0, 6);
+        String substring = preciseShardingValue.getValue().substring(0, 4);
         ShardConfig config = shardConfigMapper.selectByPrimaryKey(substring);
         if (config != null) {
             // TODO: 2019/5/8 需要调整
