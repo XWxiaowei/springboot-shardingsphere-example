@@ -30,7 +30,7 @@ import java.util.Properties;
  * @create 2019/4/29 19:56
  */
 @Configuration
-@MapperScan(basePackages = "com.jay.mapper", sqlSessionTemplateRef = "testSqlSessionTemplate")
+@MapperScan(basePackages = "com.jay.mapper.sharding", sqlSessionTemplateRef = "testSqlSessionTemplate")
 public class DataSourceConfig {
     @Value("${spring.shardingsphere.sharding.tables.orders.actualDataNodes}")
     private String ordersActualDataNodes;

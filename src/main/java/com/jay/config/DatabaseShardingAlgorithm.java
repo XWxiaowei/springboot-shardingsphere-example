@@ -1,7 +1,7 @@
 package com.jay.config;
 
 
-import com.jay.mapper.ShardConfigMapper;
+import com.jay.mapper.nosharding.ShardConfigMapper;
 import com.jay.model.ShardConfig;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +25,9 @@ import java.util.Collection;
 @Service("preciseModuloDatabaseShardingAlgorithm")
 public class DatabaseShardingAlgorithm implements PreciseShardingAlgorithm<Timestamp>{
 
-    /**
-     */
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//定义格式，不显示毫秒
     @Autowired
     private ShardConfigMapper shardConfigMapper;
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//定义格式，不显示毫秒
-
 
     /**
      * 
@@ -44,10 +41,7 @@ public class DatabaseShardingAlgorithm implements PreciseShardingAlgorithm<Times
         Timestamp valueTime = preciseShardingValue.getValue();
         String orgValue = df.format(valueTime);
         String subValue = orgValue.substring(0, 4).replace("-", "");
-        ShardConfig shardConfig = shardConfigMapper.selectByPrimaryKey(subValue);
-        if (shardConfig != null) {
-            physicDatabase = shardConfig.getConfigValue().split(",")[0];
-        }
+        physicDatabase = getShardConfig(physicDatabase, subValue);
         if (StringUtils.isBlank(physicDatabase)) {
             // TODO: 2019/5/8 需要调整
             log.info("----->该分片键值找不到对应的分库,默认取第一个库，分片键是={}，逻辑表是={},分片值是={}",preciseShardingValue.getColumnName(),preciseShardingValue.getLogicTableName(),preciseShardingValue.getValue());
@@ -57,5 +51,15 @@ public class DatabaseShardingAlgorithm implements PreciseShardingAlgorithm<Times
             }
         }
         return physicDatabase;
+    }
+
+
+    public String getShardConfig(String physicDatabase ,String subValue ) {
+        ShardConfig shardConfig = shardConfigMapper.selectByPrimaryKey(subValue);
+        if (shardConfig != null) {
+            physicDatabase = shardConfig.getConfigValue().split(",")[0];
+        }
+        return physicDatabase;
+
     }
 }

@@ -1,6 +1,6 @@
 package com.jay.service;
 
-import com.jay.mapper.OrdersDetailMapper;
+import com.jay.mapper.sharding.OrdersDetailMapper;
 import com.jay.model.OrdersDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

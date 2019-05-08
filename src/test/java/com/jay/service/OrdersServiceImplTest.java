@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.*;
-
 /**
  * @author jay.xiang
  * @create 2019/5/5 19:00

@@ -1,4 +1,4 @@
-package com.jay.mapper;
+package com.jay.mapper.sharding;
 
 import com.jay.model.OrdersDetail;
 

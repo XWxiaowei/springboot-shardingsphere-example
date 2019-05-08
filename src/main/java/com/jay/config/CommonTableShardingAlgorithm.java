@@ -1,7 +1,7 @@
 package com.jay.config;
 
 
-import com.jay.mapper.ShardConfigMapper;
+import com.jay.mapper.nosharding.ShardConfigMapper;
 import com.jay.model.ShardConfig;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.jay.mapper;
+package com.jay.mapper.nosharding;
 
 import com.jay.model.ShardConfig;
 
