@@ -43,7 +43,6 @@ public class DatabaseShardingAlgorithm implements PreciseShardingAlgorithm<Times
         String subValue = orgValue.substring(0, 4).replace("-", "");
         physicDatabase = getShardConfig(physicDatabase, subValue);
         if (StringUtils.isBlank(physicDatabase)) {
-            // TODO: 2019/5/8 需要调整
             log.info("----->该分片键值找不到对应的分库,默认取第一个库，分片键是={}，逻辑表是={},分片值是={}",preciseShardingValue.getColumnName(),preciseShardingValue.getLogicTableName(),preciseShardingValue.getValue());
             for (String value : collection) {
                 physicDatabase = value;
