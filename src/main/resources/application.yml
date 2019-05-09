@@ -31,9 +31,6 @@ spring:
           tableStrategy:
               inline:
                 shardingColumn: id
-#          tableStrategy:
-#             hint:
-#               algorithmClassName: com.jay.config.TableShardingAlgorithm
         orders_detail:
           actualDataNodes: shard_order_$->{0..1}.orders_detail_$->{0..1}
           tableStrategy:
