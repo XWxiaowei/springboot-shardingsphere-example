@@ -1,3 +1,9 @@
+## 前言
+这几天在研究分表分库的方案。综合了几种数据库方案。最后选型Sharding-jdbc。它主要有如下几个优点。
+
+1. 支持分布式事务
+2. 适用于任何基于Java的ORM框架，
+
 ## springboot-shardingsphere-example
 shardingsphere 与springboot的整合
 ## 整合策略
