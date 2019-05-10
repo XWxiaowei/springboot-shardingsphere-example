@@ -24,8 +24,8 @@ public class OrdersServiceImplTest extends BaseServiceTest {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmss");
 
         Orders orders = new Orders();
-//        String orderId = dateFormat.format(new Date())+new Random().nextInt(1000);
-        String orderId = "201905071222";
+        String orderId = dateFormat.format(new Date())+new Random().nextInt(1000);
+//        String orderId = "201905071222";
         orders.setId(orderId);
         orders.setAdddate(new Date());
         orders.setOrderType("1");
@@ -34,15 +34,15 @@ public class OrdersServiceImplTest extends BaseServiceTest {
         orders.setParentOrdersUuid(UUIDutil.getUUID());
         ordersService.saveOrders(orders);
 
-        orders.setId("20200102111");
-        try {
-            dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
-            Date parse = dateFormat.parse("2020-01-02 20:08:09");
-            orders.setAdddate(parse);
-            ordersService.saveOrders(orders);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        orders.setId("20200102111");
+//        try {
+//            dateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
+//            Date parse = dateFormat.parse("2020-01-02 20:08:09");
+//            orders.setAdddate(parse);
+//            ordersService.saveOrders(orders);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Test

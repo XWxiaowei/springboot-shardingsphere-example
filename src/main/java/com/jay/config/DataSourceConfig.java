@@ -93,7 +93,7 @@ public class DataSourceConfig {
         //配置ordersItem表规则
         shardingRuleConfig.getTableRuleConfigs().add(getOrderDetailTableRuleConfiguration());
         shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(databaseShardingColumn, preciseModuloDatabaseShardingAlgorithm));
-        shardingRuleConfig.setDefaultDatabaseShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersShardingColumn,preciseModuloTableShardingAlgorithm));
+        shardingRuleConfig.setDefaultTableShardingStrategyConfig(new StandardShardingStrategyConfiguration(ordersShardingColumn,preciseModuloTableShardingAlgorithm));
 
         //设置默认数据库
         shardingRuleConfig.setDefaultDataSourceName(defaultDataSource);
