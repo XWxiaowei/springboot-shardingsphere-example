@@ -1,3 +1,5 @@
+#博客地址：
+https://mp.weixin.qq.com/s/XW1vfGJEK0mRKOxyWM3PHQ
 ## 基本概念
 这几天在研究分表分库的方案。综合了几种数据库方案。
 ![enter description here](./images/1557631154854.png)
